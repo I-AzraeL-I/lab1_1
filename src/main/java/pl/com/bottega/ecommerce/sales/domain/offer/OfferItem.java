@@ -27,21 +27,19 @@ public class OfferItem {
 
     private final Discount discount;
 
-    public OfferItem(String productId, BigDecimal productPrice, String productName, Date productSnapshotDate,
-            String productType, int quantity) {
-        this(productId, productPrice, productName, productSnapshotDate, productType, quantity, null, null);
+    public OfferItem(Product product, Date productSnapshotDate, int quantity) {
+        this(product, productSnapshotDate, quantity, null);
     }
 
-    public OfferItem(String productId, BigDecimal productPrice, String productName, Date productSnapshotDate,
-            String productType, int quantity, BigDecimal discount, String discountCause) {
-        this.product = new Product(productId, productName, productType, new Money(productPrice));
+    public OfferItem(Product product, Date productSnapshotDate, int quantity, Discount discount) {
+        this.product = product;
         this.productSnapshotDate = productSnapshotDate;
         this.quantity = quantity;
-        this.discount = new Discount(discountCause, discount);
+        this.discount = discount;
 
         BigDecimal discountValue = new BigDecimal(0);
         if (discount != null) {
-            discountValue = discountValue.subtract(discount);
+            discountValue = discountValue.subtract(discount.getDiscount());
         }
 
         this.totalCost = new Money(product.getPrice().getAmount().multiply(new BigDecimal(quantity)).subtract(discountValue));
@@ -66,6 +64,8 @@ public class OfferItem {
     public Product getProduct() {
         return product;
     }
+
+
 
     @Override
     public int hashCode() {
